@@ -9,5 +9,6 @@
   <ItemGroup>
     <PackageReference Include="hidlibrary" Version="3.3.40" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="5.0.0" />
   </ItemGroup>
 </Project>

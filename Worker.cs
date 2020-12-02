@@ -16,12 +16,12 @@ namespace k380_func
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                foreach (K380Keyboard k in K380Keyboard.GetConnected())
+                foreach (K380Keyboard keyboard in K380Keyboard.GetConnected())
                 {
                     try
                     {
-                        k.SetFunctionKeys(true, _logger);
-                        _logger.LogInformation($"[{DateTime.Now.ToShortTimeString()}] Could enable function keys for {k.Device.DevicePath}");
+                        keyboard.SetFunctionKeys(true, _logger);
+                        _logger.LogInformation($"[{DateTime.Now.ToShortTimeString()}] Could enable function keys for {keyboard.Device.DevicePath}");
                     }
                     catch (Exception e)
                     {

@@ -7,14 +7,28 @@ namespace k380_func
 {
     class K380Keyboard
     {
-        static readonly int HID_VENDOR_ID_LOGITECH = 0x046d;
-        static readonly int HID_DEVICE_ID_K380 = 0xb342;
+        private static readonly int HID_VENDOR_ID_LOGITECH = 0x046d;
+        private static readonly int HID_DEVICE_ID_K380 = 0xb342;
 
-        static readonly byte[] k380_seq_fkeys_on = {0x10, 0xff, 0x0b, 0x1e, 0x00, 0x00, 0x00};
-        static readonly byte[] k380_seq_fkeys_off = {0x10, 0xff, 0x0b, 0x1e, 0x01, 0x00, 0x00};
+        private static readonly byte[] k380_seq_fkeys_on = {0x10, 0xff, 0x0b, 0x1e, 0x00, 0x00, 0x00};
+        private static readonly byte[] k380_seq_fkeys_off = {0x10, 0xff, 0x0b, 0x1e, 0x01, 0x00, 0x00};
 
         public HidDevice Device { get; }
 
+        public static K380Keyboard[] GetConnected()
+        {
+            return HidDevices.Enumerate(HID_VENDOR_ID_LOGITECH, HID_DEVICE_ID_K380).Where(d => d.IsConnected).Select(d => new K380Keyboard(d)).ToArray();
+        }
+
+        public void SetFunctionKeys(bool enable, ILogger<Worker> logger)
+        {
+            SetFunctionKeys(Device, enable, logger);
+        }
+
+        private K380Keyboard(HidDevice device)
+        {
+            Device = device;
+        }
 
         private static void SetFunctionKeys(HidDevice device, bool enable, ILogger logger)
         {
@@ -26,25 +40,7 @@ namespace k380_func
 
             device.CloseDevice();
 
-            if (!canActivate)
-            {
-                logger.LogInformation($"[{DateTime.Now.ToShortTimeString()}] Could not active function keys");
-            }
-        }
-
-        public static K380Keyboard[] GetConnected()
-        {
-            return HidDevices.Enumerate(HID_VENDOR_ID_LOGITECH, HID_DEVICE_ID_K380).Where(d => d.IsConnected).Select(d => new K380Keyboard(d)).ToArray();
-        }
-
-        private K380Keyboard(HidDevice device)
-        {
-            Device = device;
-        }
-
-        public void SetFunctionKeys(bool enable, ILogger<Worker> logger)
-        {
-            SetFunctionKeys(Device, enable, logger);
+            if (!canActivate) logger.LogInformation($"[{DateTime.Now.ToShortTimeString()}] Could not active function keys");
         }
     }
 }
